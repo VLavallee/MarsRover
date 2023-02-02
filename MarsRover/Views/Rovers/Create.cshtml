@@ -17,41 +17,31 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
                 <label asp-for="sPosX" class="control-label"></label>
                 <input asp-for="sPosX" class="form-control" />
                 <span asp-validation-for="sPosX" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
                 <label asp-for="sPosY" class="control-label"></label>
                 <input asp-for="sPosY" class="form-control" />
                 <span asp-validation-for="sPosY" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
                 <label asp-for="sDir" class="control-label"></label>
                 <input asp-for="sDir" class="form-control" />
                 <span asp-validation-for="sDir" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
                 <label asp-for="input" class="control-label"></label>
                 <input asp-for="input" class="form-control" />
                 <span asp-validation-for="input" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="fPosX" class="control-label"></label>
-                @*<input asp-for="fPosX" class="form-control" />*@
-                <span asp-validation-for="fPosX" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fPosY" class="control-label"></label>
-                @*<input asp-for="fPosY" class="form-control" />*@
-                <span asp-validation-for="fPosY" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fDir" class="control-label"></label>
-                @*<input asp-for="fDir" class="form-control" />*@
-                <span asp-validation-for="fDir" class="text-danger"></span>
-            </div>
+            <br>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -59,6 +49,9 @@
     </div>
 </div>
 
+
+
+// put new stuff above here 
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
