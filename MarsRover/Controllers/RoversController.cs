@@ -14,6 +14,7 @@ namespace MarsRover.Controllers
     {
         private readonly MarsRoverContext _context;
 
+        // Rover Direction Params
         char leftTurn = 'L';
         char rightTurn = 'R';
         char moveForward = 'M';
@@ -28,6 +29,16 @@ namespace MarsRover.Controllers
         int finalPosX;
         int finalPosY;
         char finalDir;
+
+        // Plateau Map Base Coordinates
+        string[] y5 = { "o", "o", "o", "o", "o", "o" };
+        string[] y4 = { "o", "o", "o", "o", "o", "o" };
+        string[] y3 = { "o", "o", "o", "o", "o", "o" };
+        string[] y2 = { "o", "o", "o", "o", "o", "o" };
+        string[] y1 = { "o", "o", "o", "o", "o", "o" };
+        string[] y0 = { "o", "o", "o", "o", "o", "o" };
+
+        int currentMove = 0;
 
         public RoversController(MarsRoverContext context)
         {
@@ -71,7 +82,7 @@ namespace MarsRover.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir")] Rover rover)
+        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir, y5, y4, y3, y2, y1, y0")] Rover rover)
         {
             if (ModelState.IsValid)
             {
@@ -79,6 +90,12 @@ namespace MarsRover.Controllers
                 rover.fPosX = finalPosX;
                 rover.fPosY = finalPosY;
                 rover.fDir = finalDir;
+                rover.y5 = y5;
+                rover.y4 = y4;
+                rover.y3 = y3;
+                rover.y2 = y2;
+                rover.y1 = y1;
+                rover.y0 = y0;
                 _context.Add(rover);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,26 +109,19 @@ namespace MarsRover.Controllers
         // x0,y1
         // x1,y1
         // x1,y2
-        // x1,y3
+        // x1,y3 (finish)
 
-        // the path taken will be marked sequentially starting at 1. "o"s denote a
+        // the path taken will be marked sequentially. "o"s denote a
         // place the rover did not touch.
         // o,o,o,o,o,o
         // o,o,o,o,o,o
         // o,6,o,o,o,o
-        // 2,1,o,o,o,o
+        // 2,5,o,o,o,o
         // 3,4,o,o,o,o
         // o,o,o,o,o,o
 
-        string[] y5 = { "o", "o", "o", "o", "o", "o" };
-        string[] y4 = { "o", "o", "o", "o", "o", "o" };
-        string[] y3 = { "o", "o", "o", "o", "o", "o" };
-        string[] y2 = { "o", "o", "o", "o", "o", "o" };
-        string[] y1 = { "o", "o", "o", "o", "o", "o" };
-        string[] y0 = { "o", "o", "o", "o", "o", "o" };
-
-        int currentMove = 0;
-        public void MarkPlateauCoordinate(int posX, int PosY)
+        
+        private void MarkPlateauCoordinate(int posX, int PosY)
         {
             if(PosY == 0)
             {
@@ -152,7 +162,7 @@ namespace MarsRover.Controllers
         }
 
 
-        public void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char rovDir, string roverInput)
+        private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char rovDir, string roverInput)
         {
             tempPosX = rovStartPosX;
             tempPosY = rovStartPosY;
@@ -167,8 +177,7 @@ namespace MarsRover.Controllers
             finalPosY = tempPosY;
             finalDir = tempDir;
         }
-
-        public void MoveRover(char MoveType, int posX, int posY, char rovDir)
+        private void MoveRover(char MoveType, int posX, int posY, char rovDir)
         {
             if (MoveType == moveForward)
             {

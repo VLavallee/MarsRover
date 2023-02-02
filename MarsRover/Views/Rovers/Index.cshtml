@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<MarsRover.Models.Rover>
 
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -74,4 +75,60 @@
 }
     </tbody>
 </table>
+
+    <br>
+
+<style>
+    .boxed{
+        width:min-content;
+        padding: 10px;
+        border: 2px solid green;
+    }
+    .boxed-child{
+        width:fit-content;
+        float: left;
+        padding: 20px;
+        border:2px solid red;
+    }
+</style>
+
+<div class="boxed">
+    
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.Name)
+    }
+    
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y5)
+    }
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y4)
+    }
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y3)
+    }
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y2)
+    }
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y1)
+    }
+    <br>
+    @foreach (var item in Model)
+    {
+        @Html.DisplayFor(modelItem => item.y0)
+    }
+</div>
+
 

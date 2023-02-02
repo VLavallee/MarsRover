@@ -17,6 +17,7 @@ namespace MarsRover.Models
         public char? fDir { get; set; }
 
         // plateau path data
+
         public string[] y5 = { "o", "o", "o", "o", "o", "o" };
         public string[] y4 = { "o", "o", "o", "o", "o", "o" };
         public string[] y3 = { "o", "o", "o", "o", "o", "o" };
