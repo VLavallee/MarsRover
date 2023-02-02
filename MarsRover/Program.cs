@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MarsRover.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<MarsRoverContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MarsRoverContext") ?? throw new InvalidOperationException("Connection string 'MarsRoverContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -22,6 +27,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Rovers}/{action=Index}/{id?}");
 
 app.Run();
