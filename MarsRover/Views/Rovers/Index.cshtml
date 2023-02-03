@@ -51,10 +51,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.sPosY)
             </td>
-            <td>
+            <td class="uppercase">
                 @Html.DisplayFor(modelItem => item.sDir)
             </td>
-            <td>
+            <td class="uppercase">
                 @Html.DisplayFor(modelItem => item.input)
             </td>
             <td>
@@ -63,7 +63,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.fPosY)
             </td>
-            <td>
+            <td class="uppercase">
                 @Html.DisplayFor(modelItem => item.fDir)
             </td>
             <td>
@@ -78,7 +78,7 @@
 
     <br>
 
-@*<style>
+<style>
     .boxed{
         width:min-content;
         padding: 10px;
@@ -90,7 +90,10 @@
         padding: 20px;
         border:2px solid red;
     }
-</style>*@
+    .uppercase{
+        text-transform:uppercase;
+    }
+</style>
 
 @*<th>
     @foreach(var item in Model)

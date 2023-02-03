@@ -14,25 +14,18 @@ namespace MarsRover.Controllers
     {
         private readonly MarsRoverContext _context;
 
-        // Rover Direction Params
-        //char leftTurn = 'L';
-        //char rightTurn = 'R';
-        //char moveForward = 'M';
-        //char north = 'N';
-        //char east = 'E';
-        //char south = 'S';
-        //char west = 'W';
-        //int tempPosX;
-        //int tempPosY;
-        //char tempDir;
-
         const char moveForward = 'M';
         const char turnLeft = 'L';
         const char turnRight = 'R';
-        const char north = 'N';
-        const char east = 'E';
-        const char south = 'S';
-        const char west = 'W';
+        
+        const char north = 'n';
+        const char NORTH = 'N';
+        const char east = 'e';
+        const char EAST = 'E';
+        const char south = 's';
+        const char SOUTH = 'S';
+        const char west = 'w';
+        const char WEST = 'W';
 
         int finalPosX { get; set; }
         int finalPosY { get; set; }
@@ -98,6 +91,9 @@ namespace MarsRover.Controllers
             }
             return View(rover);
         }
+
+        
+
         // each time the rover moves it will save the position in a model for the plateau
         // lets map out all the positions for rover 1 first:
         // x1,y2 (start)
@@ -154,6 +150,7 @@ namespace MarsRover.Controllers
 
         private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
+            roverInput = roverInput.ToUpper();
             int currentPositionX = rovStartPosX;
             int currentPositionY = rovStartPosY;
             char direction = startingDirection;
@@ -163,7 +160,6 @@ namespace MarsRover.Controllers
                 currentPositionY = MoveY(roverInput[i], currentPositionY, direction);
                 direction = ChangeDirection(roverInput[i], direction);
 
-                //MoveRover(roverInput[i], currentPositionX, currentPositionY, direction);
             }
             finalPosX = currentPositionX;
             finalPosY = currentPositionY;
@@ -172,15 +168,14 @@ namespace MarsRover.Controllers
 
         private int MoveY(char roverInput, int currentPositionY, char direction)
         {
-
             if (roverInput == moveForward)
             {
-                if (direction == north)
+                if (direction == north || direction == NORTH)
                 {
                     currentPositionY++;
                 }
                 
-                if (direction == south)
+                if (direction == south || direction == SOUTH)
                 {
                     currentPositionY--;
                 }
@@ -191,11 +186,11 @@ namespace MarsRover.Controllers
         {
             if (roverInput == moveForward)
             {
-                if (direction == east)
+                if (direction == east || direction == EAST)
                 {
                     currentPositionX++;
                 }
-                if (direction == west)
+                if (direction == west || direction == WEST)
                 {
                     currentPositionX--;
                 }
@@ -206,22 +201,22 @@ namespace MarsRover.Controllers
         {
             if (roverInput == turnLeft)
             {
-                if (direction == north)
+                if (direction == north || direction == NORTH)
                 {
                     direction = west;
                     return direction;
                 }
-                if (direction == west)
+                if (direction == west || direction == WEST)
                 {
                     direction = south;
                     return direction;
                 }
-                if (direction == south)
+                if (direction == south || direction == SOUTH)
                 {
                     direction = east;
                     return direction;
                 }
-                if (direction == east)
+                if (direction == east || direction == EAST)
                 {
                     direction = north;
                     return direction;
@@ -229,22 +224,22 @@ namespace MarsRover.Controllers
             }
             if (roverInput == turnRight)
             {
-                if (direction == north)
+                if (direction == north || direction == NORTH)
                 {
                     direction = east;
                     return direction;
                 }
-                if (direction == east)
+                if (direction == east || direction == EAST)
                 {
                     direction = south;
                     return direction;
                 }
-                if (direction == south)
+                if (direction == south || direction == SOUTH)
                 {
                     direction = west;
                     return direction;
                 }
-                if (direction == west)
+                if (direction == west || direction == WEST)
                 {
                     direction = north;
                     return direction;
@@ -252,78 +247,7 @@ namespace MarsRover.Controllers
             }
             return direction;
         }
-        //private void MoveRover(char roverInput, int currentPositionX, int currentPositionY, char direction)
-        //{
-            
-        //    if (roverInput == moveForward)
-        //    {
-        //        if (direction == north)
-        //        {
-        //            currentPositionY++;
-        //        }
-        //        if (direction == east)
-        //        {
-        //            currentPositionX++;
-        //        }
-        //        if (direction == south)
-        //        {
-        //            currentPositionY--;
-        //        }
-        //        if (direction == west)
-        //        {
-        //            currentPositionX--;
-        //        }
-        //        return;
-        //    }
-
-        //    if (roverInput == turnLeft)
-        //    {
-        //        if (direction == north)
-        //        {
-        //            direction = west;
-        //            return;
-        //        }
-        //        if (direction == west)
-        //        {
-        //            direction = south;
-        //            return;
-        //        }
-        //        if (direction == south)
-        //        {
-        //            direction = east;
-        //            return;
-        //        }
-        //        if (direction == east)
-        //        {
-        //            direction = north;
-        //            return;
-        //        }
-        //    }
-
-        //    if (roverInput == turnRight)
-        //    {
-        //        if (direction == north)
-        //        {
-        //            direction = east;
-        //            return;
-        //        }
-        //        if (direction == east)
-        //        {
-        //            direction = south;
-        //            return;
-        //        }
-        //        if (direction == south)
-        //        {
-        //            direction = west;
-        //            return;
-        //        }
-        //        if (direction == west)
-        //        {
-        //            direction = north;
-        //            return;
-        //        }
-        //    }
-        //}
+        
 
 
         // GET: Rovers/Edit/5
