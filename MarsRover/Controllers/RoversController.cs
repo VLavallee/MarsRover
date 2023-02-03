@@ -15,28 +15,30 @@ namespace MarsRover.Controllers
         private readonly MarsRoverContext _context;
 
         // Rover Direction Params
-        char leftTurn = 'L';
-        char rightTurn = 'R';
-        char moveForward = 'M';
-        char north = 'N';
-        char east = 'E';
-        char south = 'S';
-        char west = 'W';
-        int tempPosX;
-        int tempPosY;
-        char tempDir;
-        
-        int finalPosX;
-        int finalPosY;
-        char finalDir;
+        //char leftTurn = 'L';
+        //char rightTurn = 'R';
+        //char moveForward = 'M';
+        //char north = 'N';
+        //char east = 'E';
+        //char south = 'S';
+        //char west = 'W';
+        //int tempPosX;
+        //int tempPosY;
+        //char tempDir;
 
-        // Plateau Map Base Coordinates
-        string[] y5 = { "o", "o", "o", "o", "o", "o" };
-        string[] y4 = { "o", "o", "o", "o", "o", "o" };
-        string[] y3 = { "o", "o", "o", "o", "o", "o" };
-        string[] y2 = { "o", "o", "o", "o", "o", "o" };
-        string[] y1 = { "o", "o", "o", "o", "o", "o" };
-        string[] y0 = { "o", "o", "o", "o", "o", "o" };
+        const char moveForward = 'M';
+        const char turnLeft = 'L';
+        const char turnRight = 'R';
+        const char north = 'N';
+        const char east = 'E';
+        const char south = 'S';
+        const char west = 'W';
+
+        int finalPosX { get; set; }
+        int finalPosY { get; set; }
+        char finalDir { get; set; }
+
+        
 
         int currentMove = 0;
 
@@ -82,7 +84,7 @@ namespace MarsRover.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir, y5, y4, y3, y2, y1, y0")] Rover rover)
+        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir")] Rover rover)
         {
             if (ModelState.IsValid)
             {
@@ -90,12 +92,6 @@ namespace MarsRover.Controllers
                 rover.fPosX = finalPosX;
                 rover.fPosY = finalPosY;
                 rover.fDir = finalDir;
-                rover.y5 = y5;
-                rover.y4 = y4;
-                rover.y3 = y3;
-                rover.y2 = y2;
-                rover.y1 = y1;
-                rover.y0 = y0;
                 _context.Add(rover);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -116,139 +112,218 @@ namespace MarsRover.Controllers
         // o,o,o,o,o,o
         // o,o,o,o,o,o
         // o,6,o,o,o,o
-        // 2,5,o,o,o,o
+        // 2,1,o,o,o,o
         // 3,4,o,o,o,o
         // o,o,o,o,o,o
 
         
-        private void MarkPlateauCoordinate(int posX, int PosY)
-        {
-            if(PosY == 0)
-            {
-                y0[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-            if (PosY == 1)
-            {
-                y1[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-            if (PosY == 2)
-            {
-                y2[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-            if (PosY == 3)
-            {
-                y3[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-            if (PosY == 4)
-            {
-                y4[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-            if (PosY == 5)
-            {
-                y5[posX] = currentMove.ToString();
-                currentMove++;
-                return;
-            }
-        }
+        //private void MarkPlateauCoordinate(int posX, int PosY, int currentMove)
+        //{
+        //    if(PosY == 0)
+        //    {
+        //        y0[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //    if (PosY == 1)
+        //    {
+        //        y1[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //    if (PosY == 2)
+        //    {
+        //        y2[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //    if (PosY == 3)
+        //    {
+        //        y3[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //    if (PosY == 4)
+        //    {
+        //        y4[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //    if (PosY == 5)
+        //    {
+        //        y5[posX] = currentMove.ToString();
+        //        return;
+        //    }
+        //}
 
 
-        private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char rovDir, string roverInput)
+        private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
-            tempPosX = rovStartPosX;
-            tempPosY = rovStartPosY;
-            tempDir = rovDir;
+            int currentPositionX = rovStartPosX;
+            int currentPositionY = rovStartPosY;
+            char direction = startingDirection;
             for (int i = 0; i < roverInput.Length; i++)
             {
-                MarkPlateauCoordinate(tempPosX, tempPosY);
-                char getChar = roverInput[i];
-                MoveRover(getChar, tempPosX, tempPosY, tempDir);
+                currentPositionX = MoveX(roverInput[i], currentPositionX, direction);
+                currentPositionY = MoveY(roverInput[i], currentPositionY, direction);
+                direction = ChangeDirection(roverInput[i], direction);
+
+                //MoveRover(roverInput[i], currentPositionX, currentPositionY, direction);
             }
-            finalPosX = tempPosX;
-            finalPosY = tempPosY;
-            finalDir = tempDir;
+            finalPosX = currentPositionX;
+            finalPosY = currentPositionY;
+            finalDir = direction;
         }
-        private void MoveRover(char MoveType, int posX, int posY, char rovDir)
+
+        private int MoveY(char roverInput, int currentPositionY, char direction)
         {
-            if (MoveType == moveForward)
-            {
-                if (rovDir == north)
-                {
-                    tempPosY++;
-                }
-                if (rovDir == east)
-                {
-                    tempPosX++;
-                }
-                if (rovDir == south)
-                {
-                    tempPosY--;
-                }
-                if (rovDir == west)
-                {
-                    tempPosX--;
-                }
-                return;
-            }
 
-
-            if (MoveType == leftTurn)
+            if (roverInput == moveForward)
             {
-                if (rovDir == north)
+                if (direction == north)
                 {
-                    tempDir = west;
-                    return;
+                    currentPositionY++;
                 }
-                if (rovDir == west)
+                
+                if (direction == south)
                 {
-                    tempDir = south;
-                    return;
-                }
-                if (rovDir == south)
-                {
-                    tempDir = east;
-                    return;
-                }
-                if (rovDir == east)
-                {
-                    tempDir = north;
-                    return;
+                    currentPositionY--;
                 }
             }
-
-            if (MoveType == rightTurn)
-            {
-                if (rovDir == north)
-                {
-                    tempDir = east;
-                    return;
-                }
-                if (rovDir == east)
-                {
-                    tempDir = south;
-                    return;
-                }
-                if (rovDir == south)
-                {
-                    tempDir = west;
-                    return;
-                }
-                if (rovDir == west)
-                {
-                    tempDir = north;
-                    return;
-                }
-            }
+            return currentPositionY;
         }
+        private int MoveX(char roverInput, int currentPositionX, char direction)
+        {
+            if (roverInput == moveForward)
+            {
+                if (direction == east)
+                {
+                    currentPositionX++;
+                }
+                if (direction == west)
+                {
+                    currentPositionX--;
+                }
+            }
+            return currentPositionX;
+        }
+        private char ChangeDirection(char roverInput, char direction)
+        {
+            if (roverInput == turnLeft)
+            {
+                if (direction == north)
+                {
+                    direction = west;
+                    return direction;
+                }
+                if (direction == west)
+                {
+                    direction = south;
+                    return direction;
+                }
+                if (direction == south)
+                {
+                    direction = east;
+                    return direction;
+                }
+                if (direction == east)
+                {
+                    direction = north;
+                    return direction;
+                }
+            }
+            if (roverInput == turnRight)
+            {
+                if (direction == north)
+                {
+                    direction = east;
+                    return direction;
+                }
+                if (direction == east)
+                {
+                    direction = south;
+                    return direction;
+                }
+                if (direction == south)
+                {
+                    direction = west;
+                    return direction;
+                }
+                if (direction == west)
+                {
+                    direction = north;
+                    return direction;
+                }
+            }
+            return direction;
+        }
+        //private void MoveRover(char roverInput, int currentPositionX, int currentPositionY, char direction)
+        //{
+            
+        //    if (roverInput == moveForward)
+        //    {
+        //        if (direction == north)
+        //        {
+        //            currentPositionY++;
+        //        }
+        //        if (direction == east)
+        //        {
+        //            currentPositionX++;
+        //        }
+        //        if (direction == south)
+        //        {
+        //            currentPositionY--;
+        //        }
+        //        if (direction == west)
+        //        {
+        //            currentPositionX--;
+        //        }
+        //        return;
+        //    }
+
+        //    if (roverInput == turnLeft)
+        //    {
+        //        if (direction == north)
+        //        {
+        //            direction = west;
+        //            return;
+        //        }
+        //        if (direction == west)
+        //        {
+        //            direction = south;
+        //            return;
+        //        }
+        //        if (direction == south)
+        //        {
+        //            direction = east;
+        //            return;
+        //        }
+        //        if (direction == east)
+        //        {
+        //            direction = north;
+        //            return;
+        //        }
+        //    }
+
+        //    if (roverInput == turnRight)
+        //    {
+        //        if (direction == north)
+        //        {
+        //            direction = east;
+        //            return;
+        //        }
+        //        if (direction == east)
+        //        {
+        //            direction = south;
+        //            return;
+        //        }
+        //        if (direction == south)
+        //        {
+        //            direction = west;
+        //            return;
+        //        }
+        //        if (direction == west)
+        //        {
+        //            direction = north;
+        //            return;
+        //        }
+        //    }
+        //}
 
 
         // GET: Rovers/Edit/5
