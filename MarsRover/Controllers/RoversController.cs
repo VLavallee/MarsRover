@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MarsRover.Data;
 using MarsRover.Models;
+using System.Text;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace MarsRover.Controllers
 {
@@ -31,9 +34,8 @@ namespace MarsRover.Controllers
         int finalPosY { get; set; }
         char finalDir { get; set; }
 
-        
-
-        int currentMove = 0;
+        string? thePlateau;
+        int mapPositionY;
 
         public RoversController(MarsRoverContext context)
         {
@@ -77,7 +79,7 @@ namespace MarsRover.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir")] Rover rover)
+        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir,pathData")] Rover rover)
         {
             if (ModelState.IsValid)
             {
@@ -85,6 +87,7 @@ namespace MarsRover.Controllers
                 rover.fPosX = finalPosX;
                 rover.fPosY = finalPosY;
                 rover.fDir = finalDir;
+                rover.pathData = thePlateau;
                 _context.Add(rover);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -92,61 +95,43 @@ namespace MarsRover.Controllers
             return View(rover);
         }
 
-        
-
-        // each time the rover moves it will save the position in a model for the plateau
-        // lets map out all the positions for rover 1 first:
-        // x1,y2 (start)
-        // x0,y2
-        // x0,y1
-        // x1,y1
-        // x1,y2
-        // x1,y3 (finish)
-
-        // the path taken will be marked sequentially. "o"s denote a
-        // place the rover did not touch.
-        // o,o,o,o,o,o
-        // o,o,o,o,o,o
-        // o,6,o,o,o,o
-        // 2,1,o,o,o,o
-        // 3,4,o,o,o,o
-        // o,o,o,o,o,o
-
-        
-        //private void MarkPlateauCoordinate(int posX, int PosY, int currentMove)
-        //{
-        //    if(PosY == 0)
-        //    {
-        //        y0[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //    if (PosY == 1)
-        //    {
-        //        y1[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //    if (PosY == 2)
-        //    {
-        //        y2[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //    if (PosY == 3)
-        //    {
-        //        y3[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //    if (PosY == 4)
-        //    {
-        //        y4[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //    if (PosY == 5)
-        //    {
-        //        y5[posX] = currentMove.ToString();
-        //        return;
-        //    }
-        //}
-
+        private void DrawRoverPlateau(int rows = 6, int columns = 6)
+        {
+            string newPlateauPoint = "o";
+            string plateau = "";
+            
+            for (int i = 0; i < rows; i++)
+            {
+                for(int k = 0; k < columns; k++)
+                {
+                    plateau += newPlateauPoint;
+                }
+            }
+            thePlateau = plateau;
+        }
+        private void InsertPlateauMapLineReturns(int rows = 6, int charactersPerRow = 6)
+        {
+            int startingCharactersPerRow = charactersPerRow;
+            
+            for (int i = 0; i < rows - 1; i++)
+            {
+                int insertAt = charactersPerRow;
+                thePlateau = thePlateau.Insert(insertAt, "\n");
+                charactersPerRow = (charactersPerRow + startingCharactersPerRow) + 1;
+            }
+            
+        }
+        private void UpdateRoverPlateau(int currentPositionX, int currentPositionY)
+        {
+            int charactersPerRow = 6;
+            currentPositionY = charactersPerRow - currentPositionY - 1;
+            int insertAt = (charactersPerRow * currentPositionY) + currentPositionX;
+            StringBuilder sb = new StringBuilder(thePlateau);
+            sb[insertAt] = 'x';
+            
+            string updatedPlateau = sb.ToString();
+            thePlateau = updatedPlateau;
+        }
 
         private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
@@ -154,13 +139,21 @@ namespace MarsRover.Controllers
             int currentPositionX = rovStartPosX;
             int currentPositionY = rovStartPosY;
             char direction = startingDirection;
+            DrawRoverPlateau();
+            UpdateRoverPlateau(currentPositionX, currentPositionY);
+            
             for (int i = 0; i < roverInput.Length; i++)
             {
                 currentPositionX = MoveX(roverInput[i], currentPositionX, direction);
                 currentPositionY = MoveY(roverInput[i], currentPositionY, direction);
                 direction = ChangeDirection(roverInput[i], direction);
-
+                if (roverInput[i] == moveForward)
+                {
+                    UpdateRoverPlateau(currentPositionX, currentPositionY);
+                }
             }
+            UpdateRoverPlateau(currentPositionX, currentPositionY);
+            InsertPlateauMapLineReturns();
             finalPosX = currentPositionX;
             finalPosY = currentPositionY;
             finalDir = direction;

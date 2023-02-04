@@ -95,59 +95,17 @@
     }
 </style>
 
-@*<th>
-    @foreach(var item in Model)
-    {
-        @Html.DisplayFor(model => item.Name)
-        <br />
-        @Html.DisplayFor(model => item.Y5X0)
-        @Html.DisplayFor(model => item.Y5X1)
-        @Html.DisplayFor(model => item.Y5X2)
-        @Html.DisplayFor(model => item.Y5X3)
-        @Html.DisplayFor(model => item.Y5X4)
-        @Html.DisplayFor(model => item.Y5X5)
-    }
-    
-</th>*@
 
 
-@*<div class="boxed">
+
+<div>
     
     @foreach (var item in Model)
     {
         @Html.DisplayFor(modelItem => item.Name)
-    }
-    
-    <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y5)
+        @Html.Raw("<pre>"+ Html.Encode(item.pathData) + "</pre>")
     }
     <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y4)
-    }
-    <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y3)
-    }
-    <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y2)
-    }
-    <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y1)
-    }
-    <br>
-    @foreach (var item in Model)
-    {
-        @Html.DisplayFor(modelItem => item.y0)
-    }
-</div>*@
+</div>
 
 
