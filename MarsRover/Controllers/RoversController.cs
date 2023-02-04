@@ -10,6 +10,7 @@ using MarsRover.Models;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
 namespace MarsRover.Controllers
 {
@@ -17,25 +18,26 @@ namespace MarsRover.Controllers
     {
         private readonly MarsRoverContext _context;
 
-        const char moveForward = 'M';
-        const char turnLeft = 'L';
-        const char turnRight = 'R';
+        #region Rover Params
+
+        const char MoveForward = 'M';
+        const char TurnLeft = 'L';
+        const char TurnRight = 'R';
         
-        const char north = 'n';
-        const char NORTH = 'N';
-        const char east = 'e';
-        const char EAST = 'E';
-        const char south = 's';
-        const char SOUTH = 'S';
-        const char west = 'w';
-        const char WEST = 'W';
+        const char NorthLowercase = 'n';
+        const char NorthUppercase = 'N';
+        const char EastLowercase = 'e';
+        const char EastUppercase = 'E';
+        const char SouthLowercase = 's';
+        const char SouthUppercase = 'S';
+        const char WestLowercase = 'w';
+        const char WestUppercase = 'W';
 
-        int finalPosX { get; set; }
-        int finalPosY { get; set; }
-        char finalDir { get; set; }
-
-        string? thePlateau;
-        int mapPositionY;
+        int FinalPositionX { get; set; }
+        int FinalPositionY { get; set; }
+        char FinalDirection { get; set; }
+        string? PlateauMap;
+        #endregion
 
         public RoversController(MarsRoverContext context)
         {
@@ -84,10 +86,10 @@ namespace MarsRover.Controllers
             if (ModelState.IsValid)
             {
                 CalculateRoverInput(rover.sPosX, rover.sPosY, rover.sDir, rover.input);
-                rover.fPosX = finalPosX;
-                rover.fPosY = finalPosY;
-                rover.fDir = finalDir;
-                rover.pathData = thePlateau;
+                rover.fPosX = FinalPositionX;
+                rover.fPosY = FinalPositionY;
+                rover.fDir = FinalDirection;
+                rover.pathData = PlateauMap;
                 _context.Add(rover);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -95,152 +97,193 @@ namespace MarsRover.Controllers
             return View(rover);
         }
 
+
+
+        #region Plateau Map
+        // DrawRoverPlateau will create an empty string named UnmarkedPlateau and will then add in a number of 'o' chars depending on the number of rows and columns given.
+        // it will default to 6 rows and 6 columns, giving a total of 36 'o' chars within the string.
+        // it is important to understand this plateau is drawn from the the top left to the bottom right,
+        // meaning in this case the first 'o' char in the string is to be considered X0 Y5 and the last char 'o' is to be considered X5, Y0
         private void DrawRoverPlateau(int rows = 6, int columns = 6)
         {
-            string newPlateauPoint = "o";
-            string plateau = "";
-            
+            string UnmarkedPlateau = "";
+            string NewPlateauPoint = "o";
             for (int i = 0; i < rows; i++)
             {
                 for(int k = 0; k < columns; k++)
                 {
-                    plateau += newPlateauPoint;
+                    UnmarkedPlateau += NewPlateauPoint;
                 }
             }
-            thePlateau = plateau;
+            PlateauMap = UnmarkedPlateau;
         }
+        
+
+        // when the rover needs to mark the plateau map position, it first needs to calculate which section of the string to replace.
+        // to do the calculation the number of characters per row must be given in addition to the position of the rover.
+        private void MarkPlateauPosition(int currentPositionX, int currentPositionY)
+        {
+            int charactersPerRow = 6;
+            // MarkPositionYCalculation is calculated by taking the characters per row and subtracting the current Y position plus -1
+            // The additional -1 is subtracted because the rows go from 0 - 5, not 1 - 6
+            // the final insertAt position is then calculated by taking MarkPositionYCalculation and multiplying it by the characters per row,
+            // giving it the correct Y position, and then adding the current position X. 
+            int MarkPositionYCalculation = charactersPerRow - currentPositionY - 1;
+            int insertAt = (charactersPerRow * MarkPositionYCalculation) + currentPositionX;
+
+            // StringBuilder is then used to create a new string equal to the existing PlateauMap string, and inserting an 'x' char in the calculated position.
+            // the PlateauMap string is then changed to the StringBuilder string.
+            StringBuilder sb = new StringBuilder(PlateauMap);
+            sb[insertAt] = 'x';
+
+            PlateauMap = sb.ToString();
+        }
+
+
+        // this function will simply insert a line return after every row except the last
+        // I found it much simpler to do this after the map has been marked.
         private void InsertPlateauMapLineReturns(int rows = 6, int charactersPerRow = 6)
         {
             int startingCharactersPerRow = charactersPerRow;
-            
+
             for (int i = 0; i < rows - 1; i++)
             {
                 int insertAt = charactersPerRow;
-                thePlateau = thePlateau.Insert(insertAt, "\n");
+                PlateauMap = PlateauMap.Insert(insertAt, "\n");
                 charactersPerRow = (charactersPerRow + startingCharactersPerRow) + 1;
             }
-            
         }
-        private void UpdateRoverPlateau(int currentPositionX, int currentPositionY)
-        {
-            int charactersPerRow = 6;
-            currentPositionY = charactersPerRow - currentPositionY - 1;
-            int insertAt = (charactersPerRow * currentPositionY) + currentPositionX;
-            StringBuilder sb = new StringBuilder(thePlateau);
-            sb[insertAt] = 'x';
-            
-            string updatedPlateau = sb.ToString();
-            thePlateau = updatedPlateau;
-        }
+        #endregion
 
+        #region Rover Input
+        // Calculate rover input
         private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
+            // changing roverInput to uppercase means the code only needs one char definition for 'M' 'L' and 'R' each.
             roverInput = roverInput.ToUpper();
+            // position and direction will change several times so I create a variable to get and store them seperately from the initial start position and direction.
             int currentPositionX = rovStartPosX;
             int currentPositionY = rovStartPosY;
             char direction = startingDirection;
+            // a new plateau map will be drawn for every rover input calculation.
             DrawRoverPlateau();
-            UpdateRoverPlateau(currentPositionX, currentPositionY);
+            // this marks the starting position of the rover on the plateau map.
+            MarkPlateauPosition(currentPositionX, currentPositionY);
+
+            // main calculation
+            // the for loop checks at position i in the input string for directions and will continue until every character in the string has been checked.
+            
             
             for (int i = 0; i < roverInput.Length; i++)
             {
                 currentPositionX = MoveX(roverInput[i], currentPositionX, direction);
                 currentPositionY = MoveY(roverInput[i], currentPositionY, direction);
                 direction = ChangeDirection(roverInput[i], direction);
-                if (roverInput[i] == moveForward)
+
+                // since the rover can turn 90 degrees, it does not need to mark its coordinates on the map for every move.
+                // only if it moves forward will the MarkPlateauMap function run
+                if (roverInput[i] == MoveForward)
                 {
-                    UpdateRoverPlateau(currentPositionX, currentPositionY);
+                    MarkPlateauPosition(currentPositionX, currentPositionY);
                 }
             }
-            UpdateRoverPlateau(currentPositionX, currentPositionY);
-            InsertPlateauMapLineReturns();
-            finalPosX = currentPositionX;
-            finalPosY = currentPositionY;
-            finalDir = direction;
-        }
 
+            // after every direction has been given the MarkPlateauMap function will run 1 more time in case the rover moved on its last input,
+            // since the for loop will only run if the position i is less than the length of the string
+            MarkPlateauPosition(currentPositionX, currentPositionY);
+            InsertPlateauMapLineReturns();
+            FinalPositionX = currentPositionX;
+            FinalPositionY = currentPositionY;
+            FinalDirection = direction;
+        }
+        #endregion
+
+        #region Rover Movement
+        // MoveY uses position and direction to move on Y: if facing north it increases the value: if facing south it decreases the value
         private int MoveY(char roverInput, int currentPositionY, char direction)
         {
-            if (roverInput == moveForward)
+            if (roverInput == MoveForward)
             {
-                if (direction == north || direction == NORTH)
+                if (direction == NorthLowercase || direction == NorthUppercase)
                 {
                     currentPositionY++;
                 }
                 
-                if (direction == south || direction == SOUTH)
+                if (direction == SouthLowercase || direction == SouthUppercase)
                 {
                     currentPositionY--;
                 }
             }
             return currentPositionY;
         }
+        // MoveX uses position and direction to move on X: if facing east it increases the value: if facing west it decreases the value
         private int MoveX(char roverInput, int currentPositionX, char direction)
         {
-            if (roverInput == moveForward)
+            if (roverInput == MoveForward)
             {
-                if (direction == east || direction == EAST)
+                if (direction == EastLowercase || direction == EastUppercase)
                 {
                     currentPositionX++;
                 }
-                if (direction == west || direction == WEST)
+                if (direction == WestLowercase || direction == WestUppercase)
                 {
                     currentPositionX--;
                 }
             }
             return currentPositionX;
         }
+        // changes the direction the rover faces depending on the input and current direction
         private char ChangeDirection(char roverInput, char direction)
         {
-            if (roverInput == turnLeft)
+            if (roverInput == TurnLeft)
             {
-                if (direction == north || direction == NORTH)
+                if (direction == NorthLowercase || direction == NorthUppercase)
                 {
-                    direction = west;
+                    direction = WestLowercase;
                     return direction;
                 }
-                if (direction == west || direction == WEST)
+                if (direction == WestLowercase || direction == WestUppercase)
                 {
-                    direction = south;
+                    direction = SouthLowercase;
                     return direction;
                 }
-                if (direction == south || direction == SOUTH)
+                if (direction == SouthLowercase || direction == SouthUppercase)
                 {
-                    direction = east;
+                    direction = EastLowercase;
                     return direction;
                 }
-                if (direction == east || direction == EAST)
+                if (direction == EastLowercase || direction == EastUppercase)
                 {
-                    direction = north;
+                    direction = NorthLowercase;
                     return direction;
                 }
             }
-            if (roverInput == turnRight)
+            if (roverInput == TurnRight)
             {
-                if (direction == north || direction == NORTH)
+                if (direction == NorthLowercase || direction == NorthUppercase)
                 {
-                    direction = east;
+                    direction = EastLowercase;
                     return direction;
                 }
-                if (direction == east || direction == EAST)
+                if (direction == EastLowercase || direction == EastUppercase)
                 {
-                    direction = south;
+                    direction = SouthLowercase;
                     return direction;
                 }
-                if (direction == south || direction == SOUTH)
+                if (direction == SouthLowercase || direction == SouthUppercase)
                 {
-                    direction = west;
+                    direction = WestLowercase;
                     return direction;
                 }
-                if (direction == west || direction == WEST)
+                if (direction == WestLowercase || direction == WestUppercase)
                 {
-                    direction = north;
+                    direction = NorthLowercase;
                     return direction;
                 }
             }
             return direction;
         }
-        
+        #endregion
 
 
         // GET: Rovers/Edit/5
