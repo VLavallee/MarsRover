@@ -5,13 +5,17 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Rover Data</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
+<br><br />
+<h1 class="h1">Rover App </h1>
+<br><br>
+<p class="text-decoration-none">
+    <a asp-action="Create">+ New Rover Path</a>
 </p>
+<br>
+
 <table class="table">
-    <thead>
+    <thead style="background-color: lightblue;">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -27,15 +31,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Input)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalPositionX)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalPositionY)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalDirection)
             </th>
         </tr>
     </thead>
@@ -57,15 +52,7 @@
             <td class="uppercase">
                 @Html.DisplayFor(modelItem => item.Input)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FinalPositionX)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FinalPositionY)
-            </td>
-            <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.FinalDirection)
-            </td>
+            
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -76,37 +63,94 @@
     </tbody>
 </table>
     <br>
-
-
-
-<style>
-    .boxed{
-        width:min-content;
-        padding: 10px;
-        border: 2px solid green;
-    }
-    .boxed-child{
-        width:fit-content;
-        float: left;
-        padding: 20px;
-        border:2px solid red;
-    }
-    .uppercase{
-        text-transform:uppercase;
-    }
-</style>
-
-
-
-
-<div>
     
+<table class="table">
+    <thead style="background-color: lightblue;">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinalPositionX)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinalPositionY)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinalDirection)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinalPositionX)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinalPositionY)
+                </td>
+                <td class="uppercase">
+                    @Html.DisplayFor(modelItem => item.FinalDirection)
+                </td>
+            </tr>
+        }
+    </tbody>
+    </table>
+<div>
     @foreach (var item in Model)
     {
-        @Html.DisplayFor(modelItem => item.Name)
-        @Html.Raw("<pre>"+ Html.Encode(item.PlateauMap) + "</pre>")
+        
+        <div style="display:inline-block; margin-right:20px; border:1px solid gray; background-color: lightgray; padding: 10px">
+            <img src="~/images/MarsRoverImage.jpg" alt="A Mars Rover" style="width: 150px; height: 100px">
+            <h3 style="text-align: center">
+            @Html.DisplayFor(modelItem => item.Name)
+            </h3>
+            <h4 style="text-align: center">
+            @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
+            </h4>
+        </div>
     }
     <br>
 </div>
+
+<link rel="stylesheet" href="https://kit.fontawesome.com/6dea6854ad.css" crossorigin="anonymous">
+<style>
+    body {
+        background-color:whitesmoke;
+    }
+
+    .uppercase {
+        text-transform: uppercase;
+    }
+
+    .text-decoration-none a {
+        text-decoration:none;
+        font-size: 35px;
+        font-family: Arial, sans-serif;
+        color:whitesmoke;
+        background-color:chocolate;
+        padding: 10px 20px;
+        border-radius:10px;
+    }
+
+    .text-decoration-none a:hover {
+        text-decoration:none;
+        background-color:dimgrey;
+        color: whitesmoke
+    }
+
+    .h1 {
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        font-size: 30px;
+        color: dimgrey;
+    }
+</style>
+
 
 

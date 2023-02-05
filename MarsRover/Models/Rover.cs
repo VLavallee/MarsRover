@@ -7,16 +7,16 @@ namespace MarsRover.Models
         // rover data
         public int Id { get; set; }
 
-        [DisplayName("Name")]
+        [DisplayName("Rover Name")]
         public string? Name { get; set; }
 
-        [DisplayName("Start Pos X")]
+        [DisplayName("Starting Position X")]
         public int StartingPositionX { get; set; }
 
-        [DisplayName("Start Pos Y")]
+        [DisplayName("Starting Position Y")]
         public int StartingPositionY { get; set; }
 
-        [DisplayName("Start Dir")]
+        [DisplayName("Starting Direction")]
         public char StartingDirection { get; set; }
 
         [DisplayName("Plateau Size X")]
@@ -29,10 +29,10 @@ namespace MarsRover.Models
         public string? Input { get; set; }
 
 
-        [DisplayName("Final Pos X")]
+        [DisplayName("Final Position X")]
         public int? FinalPositionX { get; set; }
 
-        [DisplayName("Final Pos Y")]
+        [DisplayName("Final Position Y")]
         public int? FinalPositionY { get; set; }
 
         [DisplayName("Final Dir")]
