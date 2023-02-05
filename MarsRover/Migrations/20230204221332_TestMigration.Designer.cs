@@ -4,6 +4,7 @@ using MarsRover.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarsRover.Migrations
 {
     [DbContext(typeof(MarsRoverContext))]
-    partial class MarsRoverContextModelSnapshot : ModelSnapshot
+    [Migration("20230204221332_TestMigration")]
+    partial class TestMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,39 +33,33 @@ namespace MarsRover.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("FinalDirection")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1)");
-
-                    b.Property<int?>("FinalPositionX")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("FinalPositionY")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Input")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PlateauMap")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlateauSizeX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlateauSizeY")
-                        .HasColumnType("int");
-
-                    b.Property<string>("StartingDirection")
+                    b.Property<string>("fDir")
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
 
-                    b.Property<int>("StartingPositionX")
+                    b.Property<int?>("fPosX")
                         .HasColumnType("int");
 
-                    b.Property<int>("StartingPositionY")
+                    b.Property<int?>("fPosY")
+                        .HasColumnType("int");
+
+                    b.Property<string>("input")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("pathData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("sDir")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<int>("sPosX")
+                        .HasColumnType("int");
+
+                    b.Property<int>("sPosY")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

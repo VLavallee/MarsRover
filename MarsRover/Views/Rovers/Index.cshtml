@@ -17,25 +17,25 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.sPosX)
+                @Html.DisplayNameFor(model => model.StartingPositionX)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.sPosY)
+                @Html.DisplayNameFor(model => model.StartingPositionY)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.sDir)
+                @Html.DisplayNameFor(model => model.StartingDirection)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.input)
+                @Html.DisplayNameFor(model => model.Input)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.fPosX)
+                @Html.DisplayNameFor(model => model.FinalPositionX)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.fPosY)
+                @Html.DisplayNameFor(model => model.FinalPositionY)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.fDir)
+                @Html.DisplayNameFor(model => model.FinalDirection)
             </th>
         </tr>
     </thead>
@@ -46,25 +46,25 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.sPosX)
+                @Html.DisplayFor(modelItem => item.StartingPositionX)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.sPosY)
+                @Html.DisplayFor(modelItem => item.StartingPositionY)
             </td>
             <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.sDir)
+                @Html.DisplayFor(modelItem => item.StartingDirection)
             </td>
             <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.input)
+                @Html.DisplayFor(modelItem => item.Input)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.fPosX)
+                @Html.DisplayFor(modelItem => item.FinalPositionX)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.fPosY)
+                @Html.DisplayFor(modelItem => item.FinalPositionY)
             </td>
             <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.fDir)
+                @Html.DisplayFor(modelItem => item.FinalDirection)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -75,8 +75,9 @@
 }
     </tbody>
 </table>
-
     <br>
+
+
 
 <style>
     .boxed{
@@ -103,7 +104,7 @@
     @foreach (var item in Model)
     {
         @Html.DisplayFor(modelItem => item.Name)
-        @Html.Raw("<pre>"+ Html.Encode(item.pathData) + "</pre>")
+        @Html.Raw("<pre>"+ Html.Encode(item.PlateauMap) + "</pre>")
     }
     <br>
 </div>

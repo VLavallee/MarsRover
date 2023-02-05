@@ -4,6 +4,7 @@ using MarsRover.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarsRover.Migrations
 {
     [DbContext(typeof(MarsRoverContext))]
-    partial class MarsRoverContextModelSnapshot : ModelSnapshot
+    [Migration("20230204223103_NameChanges")]
+    partial class NameChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,12 +51,6 @@ namespace MarsRover.Migrations
 
                     b.Property<string>("PlateauMap")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlateauSizeX")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PlateauSizeY")
-                        .HasColumnType("int");
 
                     b.Property<string>("StartingDirection")
                         .IsRequired()

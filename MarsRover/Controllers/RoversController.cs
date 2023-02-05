@@ -81,15 +81,15 @@ namespace MarsRover.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,sPosX,sPosY,sDir,input,fPosX,fPosY,fDir,pathData")] Rover rover)
+        public async Task<IActionResult> Create([Bind("Id,Name,PlateauSizeX,PlateauSizeY,StartingPositionX,StartingPositionY,StartingDirection,Input,FinalPositionX,FinalPositionY,FinalDirection,PlateauMap")] Rover rover)
         {
             if (ModelState.IsValid)
             {
-                CalculateRoverInput(rover.sPosX, rover.sPosY, rover.sDir, rover.input);
-                rover.fPosX = FinalPositionX;
-                rover.fPosY = FinalPositionY;
-                rover.fDir = FinalDirection;
-                rover.pathData = PlateauMap;
+                CalculateRoverInput(rover.PlateauSizeX, rover.PlateauSizeY, rover.StartingPositionX, rover.StartingPositionY, rover.StartingDirection, rover.Input);
+                rover.FinalPositionX = FinalPositionX;
+                rover.FinalPositionY = FinalPositionY;
+                rover.FinalDirection = FinalDirection;
+                rover.PlateauMap = PlateauMap;
                 _context.Add(rover);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -104,7 +104,7 @@ namespace MarsRover.Controllers
         // it will default to 6 rows and 6 columns, giving a total of 36 'o' chars within the string.
         // it is important to understand this plateau is drawn from the the top left to the bottom right,
         // meaning in this case the first 'o' char in the string is to be considered X0 Y5 and the last char 'o' is to be considered X5, Y0
-        private void DrawRoverPlateau(int rows = 6, int columns = 6)
+        private void DrawRoverPlateau(int columns = 6, int rows = 6)
         {
             string UnmarkedPlateau = "";
             string NewPlateauPoint = "o";
@@ -121,24 +121,33 @@ namespace MarsRover.Controllers
 
         // when the rover needs to mark the plateau map position, it first needs to calculate which section of the string to replace.
         // to do the calculation the number of characters per row must be given in addition to the position of the rover.
-        private void MarkPlateauPosition(int currentPositionX, int currentPositionY)
+
+
+        // add check for characters that are not L M R
+
+        private void MarkPlateauPosition(int currentPositionX, int currentPositionY, int plateauSizeY)
         {
-            int charactersPerRow = 6;
             // MarkPositionYCalculation is calculated by taking the characters per row and subtracting the current Y position plus -1
             // The additional -1 is subtracted because the rows go from 0 - 5, not 1 - 6
             // the final insertAt position is then calculated by taking MarkPositionYCalculation and multiplying it by the characters per row,
-            // giving it the correct Y position, and then adding the current position X. 
-            int MarkPositionYCalculation = charactersPerRow - currentPositionY - 1;
-            int insertAt = (charactersPerRow * MarkPositionYCalculation) + currentPositionX;
+            // giving it the correct Y position, and then adding the current position X.
+            
+            int MarkPositionYCalculation = plateauSizeY - currentPositionY - 1;
+            int insertAt = (plateauSizeY * MarkPositionYCalculation) + currentPositionX;
 
             // StringBuilder is then used to create a new string equal to the existing PlateauMap string, and inserting an 'x' char in the calculated position.
             // the PlateauMap string is then changed to the StringBuilder string.
             StringBuilder sb = new StringBuilder(PlateauMap);
-            sb[insertAt] = 'x';
-
+            try
+            {
+                sb[insertAt] = 'x';
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception caught " + ex);
+            }
             PlateauMap = sb.ToString();
         }
-
 
         // this function will simply insert a line return after every row except the last
         // I found it much simpler to do this after the map has been marked.
@@ -148,16 +157,22 @@ namespace MarsRover.Controllers
 
             for (int i = 0; i < rows - 1; i++)
             {
-                int insertAt = charactersPerRow;
-                PlateauMap = PlateauMap.Insert(insertAt, "\n");
-                charactersPerRow = (charactersPerRow + startingCharactersPerRow) + 1;
+                try
+                {
+                    PlateauMap = PlateauMap.Insert(charactersPerRow, "\n");
+                    charactersPerRow = (charactersPerRow + startingCharactersPerRow) + 1;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception caught " + ex);
+                }
             }
         }
         #endregion
 
         #region Rover Input
         // Calculate rover input
-        private void CalculateRoverInput(int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
+        private void CalculateRoverInput(int plateauSizeX, int plateauSizeY, int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
             // changing roverInput to uppercase means the code only needs one char definition for 'M' 'L' and 'R' each.
             roverInput = roverInput.ToUpper();
@@ -166,9 +181,9 @@ namespace MarsRover.Controllers
             int currentPositionY = rovStartPosY;
             char direction = startingDirection;
             // a new plateau map will be drawn for every rover input calculation.
-            DrawRoverPlateau();
+            DrawRoverPlateau(plateauSizeX, plateauSizeY);
             // this marks the starting position of the rover on the plateau map.
-            MarkPlateauPosition(currentPositionX, currentPositionY);
+            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
 
             // main calculation
             // the for loop checks at position i in the input string for directions and will continue until every character in the string has been checked.
@@ -184,13 +199,13 @@ namespace MarsRover.Controllers
                 // only if it moves forward will the MarkPlateauMap function run
                 if (roverInput[i] == MoveForward)
                 {
-                    MarkPlateauPosition(currentPositionX, currentPositionY);
+                    MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
                 }
             }
 
             // after every direction has been given the MarkPlateauMap function will run 1 more time in case the rover moved on its last input,
             // since the for loop will only run if the position i is less than the length of the string
-            MarkPlateauPosition(currentPositionX, currentPositionY);
+            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
             InsertPlateauMapLineReturns();
             FinalPositionX = currentPositionX;
             FinalPositionY = currentPositionY;
@@ -307,7 +322,7 @@ namespace MarsRover.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,sPosX,sPosY,sDir,Input,fPosX,fPosY,fDir")] Rover rover)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PlateauSizeX,PlateauSizeY,StartingPositionX,StartingPositionY,StartingDirection,Input,FinalPositionX,FinalPositionY,FinalDirection")] Rover rover)
         {
             if (id != rover.Id)
             {
