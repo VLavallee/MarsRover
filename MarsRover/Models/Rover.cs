@@ -27,14 +27,17 @@ namespace MarsRover.Models
         public char StartingDirection { get; set; }
 
         [DisplayName("Plateau Size X")]
+        
         [RegularExpression(@"^(?:[2-9]|\d\d\d*)$", ErrorMessage = "Values greater than 1 only")]
         public int PlateauSizeX { get; set; }
 
         [DisplayName("Plateau Size Y")]
+        [CompareProperty("PlateauSizeX")]
         [RegularExpression(@"^(?:[2-9]|\d\d\d*)$", ErrorMessage = "Values greater than 1 only")]
         public int PlateauSizeY { get; set; }
 
         [DisplayName("Input")]
+        [Required(ErrorMessage = "This field is required")]
         [RegularExpression(@"^[LlMmRr]+$", ErrorMessage = "Values of L, R, and M only")]
         public string? Input { get; set; }
 

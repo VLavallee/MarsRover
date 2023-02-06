@@ -122,7 +122,14 @@
         </tbody>
     </table>
 }
-
+@if(Model == null || Model.Count() == 0)
+{
+    <br />
+    <h1 class="h1, text-aligned-center">Welcome To Rover App. </h1>
+    <br />
+    <br />
+    <h3 class="text-aligned-center">There is no rover data to display. Please click on the + New Rover Path button to create a new dataset.</h3>
+}
 <div>
     @foreach (var item in Model)
     {
