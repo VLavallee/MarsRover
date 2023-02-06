@@ -6,13 +6,16 @@
 }
 
 
-<br><br />
+<br><br>
+
 <h1 class="h1">Rover App </h1>
 <h1 class="h1"> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-up"></i></h1>
 <br><br>
 <p class="new-path-button">
     <a asp-action="Create">+ New Rover Path</a>
 </p>
+    
+
 <br>
 
 @if(Model != null && Model.Count() > 0)
@@ -84,6 +87,12 @@
                 <th>
                     @Html.DisplayNameFor(model => model.FinalDirection)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PlateauSizeX)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PlateauSizeY)
+                </th>
             </tr>
         </thead>
         <tbody class="text-aligned-center">
@@ -102,33 +111,21 @@
                     <td class="uppercase">
                         @Html.DisplayFor(modelItem => item.FinalDirection)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlateauSizeX)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PlateauSizeY)
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-@*<div>
-    @foreach (var item in Model)
-    {
-        
-        <div style="display:inline-block; margin-right:20px; border:1px solid gray; background-color: lightgray; padding: 10px">
-            <img src="~/images/MarsRoverImage.jpg" alt="A Mars Rover" style="width: 150px; height: 100px">
-            <h3 style="text-align: center">
-            @Html.DisplayFor(modelItem => item.Name)
-            </h3>
-            <h4 style="text-align: center">
-                @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
-            </h4>
-        </div>
-    }
-    <br>
-</div>*@
 <div>
     @foreach (var item in Model)
     {
-        string clearedPath = item.PlateauMap;
-        @*string clearedPath = Regex.Replace(item.PlateauMap, @"\t|\n|\r", "");*@
         <div class="inline-block">
             <h3 class="text-aligned-center">
                 @Html.DisplayFor(modelItem => item.Name)
@@ -153,34 +150,34 @@
                     {
                         int index = (item.PlateauSizeY * i) + k;
                         <div class="boxed">
-                                @if (clearedPath[index] == 'B')
+                                @if (item.PlateauMap[index] == 'B')
                                 {
-                                    @clearedPath[index]
+                                    @item.PlateauMap[index]
                                     @if (item.StartingDirection == 'N')
                                     {
-                                        @clearedPath[index]
+                                        @item.PlateauMap[index]
                                         <i class="fas fa-arrow-up"></i>
                                     }
                                     @if (item.StartingDirection == 'E')
                                     {
-                                        @clearedPath[index]
+                                        @item.PlateauMap[index]
                                         <i class="fas fa-arrow-right"></i>
                                     }
                                     @if (item.StartingDirection == 'S')
                                     {
-                                        @clearedPath[index]
+                                        @item.PlateauMap[index]
                                         <i class="fas fa-arrow-down"></i>
                                     }
                                     @if (item.StartingDirection == 'W')
                                     {
-                                        @clearedPath[index]
+                                        @item.PlateauMap[index]
                                         <i class="fas fa-arrow-left"></i>
                                     }
                                     
                                 }
-                                @if(clearedPath[index] == 'F')
+                                @if (item.PlateauMap[index] == 'F')
                                 {
-                                    @clearedPath[index]
+                                    @item.PlateauMap[index]
                                    @if (item.FinalDirection == 'N')
                                     {
                                         <i class="fas fa-arrow-up"></i>
@@ -198,26 +195,21 @@
                                         <i class="fas fa-arrow-left"></i>
                                     }
                                 }
-                                @if (clearedPath[index] == 'N')
+                                @if (item.PlateauMap[index] == 'N')
                                 {
-                                    @*@clearedPath[index]*@
                                     <i class="fas fa-arrow-up"></i>
                                 }
-                                @if (clearedPath[index] == 'E')
+                                @if (item.PlateauMap[index] == 'E')
                                 {
-                                    @*@clearedPath[index]*@
                                     <i class="fas fa-arrow-right"></i>
                                 }
-                                @if (clearedPath[index] == 'S')
+                                @if (item.PlateauMap[index] == 'S')
                                 {
-                                    @*@clearedPath[index]*@
                                     <i class="fas fa-arrow-down"></i>
                                 }
-                                @if (clearedPath[index] == 'W')
+                                @if (item.PlateauMap[index] == 'W')
                                 {
-                                    @*@clearedPath[index]*@
                                     <i class="fas fa-arrow-left"></i>
-                                    
                                 }
                                 
                         </div>
@@ -283,7 +275,7 @@
         font-size: 30px;
         font-family: Arial, sans-serif;
         color:whitesmoke;
-        background-color:darkolivegreen;
+        background-color:green;
         padding: 10px 20px;
         border-radius:10px;
     }
@@ -295,7 +287,7 @@
 
     .delete-button{
         text-decoration: none;
-        font-size: 30px;
+        font-size: 20px;
         font-family: Arial, sans-serif;
         color: whitesmoke;
         background-color: chocolate;
@@ -315,11 +307,7 @@
     }
 </style>
 
-@*"fa-solid fa-arrow-up"*@
 
-@*<h4 style="text-align: center">
-    @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
-</h4>*@
 
 
 

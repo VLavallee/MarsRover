@@ -1,12 +1,15 @@
 ﻿@model MarsRover.Models.Rover
-
+<head>
+    <link rel="stylesheet" type="text/css" href="~/css/Styles.css" />
+</head>
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<br />
+<h1>Create A New Rover Path</h1>
 
-<h4>Rover</h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,21 +21,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <br>
-
-            <div class="form-group">
-                <label asp-for="PlateauSizeX" class="control-label"></label>
-                <input asp-for="PlateauSizeX" class="form-control" />
-                <span asp-validation-for="PlateauSizeX" class="text-danger"></span>
-            </div>
-            <br>
-
-            <div class="form-group">
-                <label asp-for="PlateauSizeY" class="control-label"></label>
-                <input asp-for="PlateauSizeY" class="form-control" />
-                <span asp-validation-for="PlateauSizeY" class="text-danger"></span>
-            </div>
-            <br>
-
 
             <div class="form-group">
                 <label asp-for="StartingPositionX" class="control-label"></label>
@@ -51,6 +39,20 @@
                 <input asp-for="StartingDirection" class="form-control" />
                 <span asp-validation-for="StartingDirection" class="text-danger"></span>
             </div>
+
+            <br>
+            <div class="form-group">
+                <label asp-for="PlateauSizeX" class="control-label"></label>
+                <input asp-for="PlateauSizeX" class="form-control" />
+                <span asp-validation-for="PlateauSizeX" class="text-danger"></span>
+            </div>
+            <br>
+
+            <div class="form-group">
+                <label asp-for="PlateauSizeY" class="control-label"></label>
+                <input asp-for="PlateauSizeY" class="form-control" />
+                <span asp-validation-for="PlateauSizeY" class="text-danger"></span>
+            </div>
             <br>
             <div class="form-group">
                 <label asp-for="Input" class="control-label"></label>
@@ -58,8 +60,12 @@
                 <span asp-validation-for="Input" class="text-danger"></span>
             </div>
             <br>
+            <div >
+                <input type="submit" value="Create" class="btn btn-success" />
+            </div>
+            <br>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <a class="btn btn-primary" asp-action="Index"> Back </a>
             </div>
         </form>
     </div>
@@ -67,10 +73,10 @@
 
 
 
-// put new stuff above here 
-<div>
+ 
+@*<div>
     <a asp-action="Index">Back to List</a>
-</div>
+</div>*@
 
 <style>
     .uppercase {

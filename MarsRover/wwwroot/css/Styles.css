@@ -1,0 +1,87 @@
+﻿
+
+text-aligned-center {
+    text-align: center;
+}
+
+path-box-legend-text {
+    font-size: 13px;
+}
+
+inline-block {
+    display: inline-block;
+    margin: 20px;
+}
+
+boxed {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    border: 1px solid black;
+}
+
+boxed-start {
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    border: 1px solid green;
+}
+
+boxed-invisible {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 5px;
+    border: 2px solid lightgray;
+}
+
+body {
+    background-color: whitesmoke;
+}
+
+heading-background-color {
+    background-color: lightblue;
+    text-align: center;
+}
+
+uppercase {
+    text-transform: uppercase;
+}
+
+new-path-button a {
+    text-decoration: none;
+    font-size: 30px;
+    font-family: Arial, sans-serif;
+    color: whitesmoke;
+    background-color: darkolivegreen;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+new-path-button a:hover {
+    background-color: dimgrey;
+    color: whitesmoke
+}    
+
+delete-button {
+    text-decoration: none;
+    font-size: 30px;
+    font-family: Arial, sans-serif;
+    color: whitesmoke;
+    background-color: chocolate;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+delete-button a:hover {
+    color: black;
+    background-color: whitesmoke;
+    text-decoration: none;
+}
+
+h1 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    color: dimgrey;
+}

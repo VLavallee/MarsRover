@@ -171,25 +171,8 @@ namespace MarsRover.Controllers
             PlateauMap = sb.ToString();
         }
 
-        // this function will simply insert a line return after every row except the last
-        // I found it much simpler to do this after the map has been marked.
-        private void InsertPlateauMapLineReturns(int rows = 6, int charactersPerRow = 6)
-        {
-            int startingCharactersPerRow = charactersPerRow;
-
-            for (int i = 0; i < rows - 1; i++)
-            {
-                try
-                {
-                    PlateauMap = PlateauMap.Insert(charactersPerRow, "\n");
-                    charactersPerRow = (charactersPerRow + startingCharactersPerRow) + 1;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Exception caught " + ex);
-                }
-            }
-        }
+        
+        
         #endregion
 
         #region Rover Input
