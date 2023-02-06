@@ -1,5 +1,5 @@
-﻿@model IEnumerable<MarsRover.Models.Rover>
-
+﻿@using System.Text.RegularExpressions;
+@model IEnumerable<MarsRover.Models.Rover>
 
 @{
     ViewData["Title"] = "Index";
@@ -8,100 +8,107 @@
 
 <br><br />
 <h1 class="h1">Rover App </h1>
+<h1 class="h1"> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-right"></i> <i class="fas fa-arrow-up"></i></h1>
 <br><br>
-<p class="text-decoration-none">
+<p class="new-path-button">
     <a asp-action="Create">+ New Rover Path</a>
 </p>
 <br>
 
-<table class="table">
-    <thead style="background-color: lightblue;">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartingPositionX)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartingPositionY)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartingDirection)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Input)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartingPositionX)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartingPositionY)
-            </td>
-            <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.StartingDirection)
-            </td>
-            <td class="uppercase">
-                @Html.DisplayFor(modelItem => item.Input)
-            </td>
-            
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-    <br>
-    
-<table class="table">
-    <thead style="background-color: lightblue;">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalPositionX)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalPositionY)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FinalDirection)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if(Model != null && Model.Count() > 0)
+{
+    <table class="table">
+        <thead class="heading-background-color">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FinalPositionX)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FinalPositionY)
-                </td>
-                <td class="uppercase">
-                    @Html.DisplayFor(modelItem => item.FinalDirection)
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartingPositionX)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartingPositionY)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StartingDirection)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Input)
+                </th>
             </tr>
-        }
-    </tbody>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr class="text-aligned-center">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartingPositionX)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartingPositionY)
+                    </td>
+                    <td class="uppercase">
+                        @Html.DisplayFor(modelItem => item.StartingDirection)
+                    </td>
+                    <td class="uppercase">
+                        @Html.DisplayFor(modelItem => item.Input)
+                    </td>
+
+                    <td class="delete-button">
+                        |
+                        <a asp-action="Delete" asp-route-id="@item.Id">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
     </table>
-<div>
+    <br>
+
+    <table class="table">
+        <thead class="heading-background-color">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FinalPositionX)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FinalPositionY)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FinalDirection)
+                </th>
+            </tr>
+        </thead>
+        <tbody class="text-aligned-center">
+            @foreach (var item in Model)
+            {
+                <tr class="text-aligned-center">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FinalPositionX)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FinalPositionY)
+                    </td>
+                    <td class="uppercase">
+                        @Html.DisplayFor(modelItem => item.FinalDirection)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@*<div>
     @foreach (var item in Model)
     {
         
@@ -111,39 +118,195 @@
             @Html.DisplayFor(modelItem => item.Name)
             </h3>
             <h4 style="text-align: center">
-            @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
+                @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
             </h4>
         </div>
     }
     <br>
+</div>*@
+<div>
+    @foreach (var item in Model)
+    {
+        string clearedPath = item.PlateauMap;
+        @*string clearedPath = Regex.Replace(item.PlateauMap, @"\t|\n|\r", "");*@
+        <div class="inline-block">
+            <h3 class="text-aligned-center">
+                @Html.DisplayFor(modelItem => item.Name)
+            </h3>
+            <h4 class="path-box-legend-text">
+                B = Beginning Position, F = Final Position
+            </h4>
+        @for (int i = 0; i < item.PlateauSizeX + 1; i++)
+        {
+            <div class="row">
+                @if (item.PlateauSizeX - 1 - i >= 0)
+                {
+                    <div class="boxed-invisible"> @(item.PlateauSizeX - 1 - i) </div>
+                }
+                else
+                {
+                    <div class="boxed-invisible"> </div>
+                }
+                @for (int k = 0; k < item.PlateauSizeY; k++)
+                {
+                    @if (i < item.PlateauSizeY)
+                    {
+                        int index = (item.PlateauSizeY * i) + k;
+                        <div class="boxed">
+                                @if (clearedPath[index] == 'B')
+                                {
+                                    @clearedPath[index]
+                                    @if (item.StartingDirection == 'N')
+                                    {
+                                        @clearedPath[index]
+                                        <i class="fas fa-arrow-up"></i>
+                                    }
+                                    @if (item.StartingDirection == 'E')
+                                    {
+                                        @clearedPath[index]
+                                        <i class="fas fa-arrow-right"></i>
+                                    }
+                                    @if (item.StartingDirection == 'S')
+                                    {
+                                        @clearedPath[index]
+                                        <i class="fas fa-arrow-down"></i>
+                                    }
+                                    @if (item.StartingDirection == 'W')
+                                    {
+                                        @clearedPath[index]
+                                        <i class="fas fa-arrow-left"></i>
+                                    }
+                                    
+                                }
+                                @if(clearedPath[index] == 'F')
+                                {
+                                    @clearedPath[index]
+                                   @if (item.FinalDirection == 'N')
+                                    {
+                                        <i class="fas fa-arrow-up"></i>
+                                    }
+                                    @if (item.FinalDirection == 'E')
+                                    {
+                                        <i class="fas fa-arrow-right"></i>
+                                    }
+                                    @if (item.FinalDirection == 'S')
+                                    {
+                                        <i class="fas fa-arrow-down"></i>
+                                    }
+                                    @if (item.FinalDirection == 'W')
+                                    {
+                                        <i class="fas fa-arrow-left"></i>
+                                    }
+                                }
+                                @if (clearedPath[index] == 'N')
+                                {
+                                    @*@clearedPath[index]*@
+                                    <i class="fas fa-arrow-up"></i>
+                                }
+                                @if (clearedPath[index] == 'E')
+                                {
+                                    @*@clearedPath[index]*@
+                                    <i class="fas fa-arrow-right"></i>
+                                }
+                                @if (clearedPath[index] == 'S')
+                                {
+                                    @*@clearedPath[index]*@
+                                    <i class="fas fa-arrow-down"></i>
+                                }
+                                @if (clearedPath[index] == 'W')
+                                {
+                                    @*@clearedPath[index]*@
+                                    <i class="fas fa-arrow-left"></i>
+                                    
+                                }
+                                
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="boxed-invisible"> @k </div>
+                    }
+
+                }
+            </div>
+
+        }
+        </div>
+    }
 </div>
 
-<link rel="stylesheet" href="https://kit.fontawesome.com/6dea6854ad.css" crossorigin="anonymous">
+
 <style>
-    body {
-        background-color:whitesmoke;
+    .text-aligned-center{
+        text-align: center;
+    }
+    .path-box-legend-text {
+        font-size: 13px;
+    }
+    .inline-block{
+        display:inline-block;
+        margin: 20px;
+    }
+    .boxed {
+        width: 40px;
+        height: 40px;
+        padding: 5px;
+        border: 1px solid black;
     }
 
+    .boxed-start {
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        border: 1px solid green;
+    }
+    .boxed-invisible {
+        width: 40px;
+        height: 40px;
+        text-align:center;
+        padding: 5px;
+        border: 2px solid  lightgray;
+    }
+    .body {
+        background-color:whitesmoke;
+    }
+    .heading-background-color{
+        background-color:lightblue;
+        text-align:center;
+    }
     .uppercase {
         text-transform: uppercase;
     }
 
-    .text-decoration-none a {
+    .new-path-button a {
         text-decoration:none;
-        font-size: 35px;
+        font-size: 30px;
         font-family: Arial, sans-serif;
         color:whitesmoke;
-        background-color:chocolate;
+        background-color:darkolivegreen;
         padding: 10px 20px;
         border-radius:10px;
     }
 
-    .text-decoration-none a:hover {
-        text-decoration:none;
+    .new-path-button a:hover {
         background-color:dimgrey;
         color: whitesmoke
     }
 
+    .delete-button{
+        text-decoration: none;
+        font-size: 30px;
+        font-family: Arial, sans-serif;
+        color: whitesmoke;
+        background-color: chocolate;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+    .delete-button a:hover {
+            color:black;
+            background-color: whitesmoke;
+            text-decoration:none;
+    }
     .h1 {
         font-family: Arial, sans-serif;
         font-weight: bold;
@@ -151,6 +314,12 @@
         color: dimgrey;
     }
 </style>
+
+@*"fa-solid fa-arrow-up"*@
+
+@*<h4 style="text-align: center">
+    @Html.Raw("<pre>" + Html.Encode(item.PlateauMap) + "</pre>")
+</h4>*@
 
 
 

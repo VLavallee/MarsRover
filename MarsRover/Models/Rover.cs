@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using MarsRover.Controllers;
+using Microsoft.VisualBasic;
+using System.ComponentModel;
 
 namespace MarsRover.Models
 {
@@ -10,13 +12,13 @@ namespace MarsRover.Models
         [DisplayName("Rover Name")]
         public string? Name { get; set; }
 
-        [DisplayName("Starting Position X")]
+        [DisplayName("Beginning Position X")]
         public int StartingPositionX { get; set; }
 
-        [DisplayName("Starting Position Y")]
+        [DisplayName("Beginning Position Y")]
         public int StartingPositionY { get; set; }
 
-        [DisplayName("Starting Direction")]
+        [DisplayName("Beginning Direction")]
         public char StartingDirection { get; set; }
 
         [DisplayName("Plateau Size X")]
@@ -35,12 +37,14 @@ namespace MarsRover.Models
         [DisplayName("Final Position Y")]
         public int? FinalPositionY { get; set; }
 
-        [DisplayName("Final Dir")]
+        [DisplayName("Final Direction")]
         public char FinalDirection { get; set; }
 
-        // plateau path data
+        // Plateau Map Point Data 
 
         public string? PlateauMap { get; set; }
+
+        
 
     }
 

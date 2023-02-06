@@ -20,18 +20,20 @@ namespace MarsRover.Controllers
 
         #region Rover Params
 
-        const char MoveForward = 'M';
-        const char TurnLeft = 'L';
-        const char TurnRight = 'R';
-        
-        const char NorthLowercase = 'n';
-        const char NorthUppercase = 'N';
-        const char EastLowercase = 'e';
-        const char EastUppercase = 'E';
-        const char SouthLowercase = 's';
-        const char SouthUppercase = 'S';
-        const char WestLowercase = 'w';
-        const char WestUppercase = 'W';
+        public static class Constants
+        {
+            public const char MoveForward = 'M';
+            public const char TurnLeft = 'L';
+            public const char TurnRight = 'R';
+
+            public const char NorthUppercase = 'N';
+            public const char EastUppercase = 'E';
+            public const char SouthUppercase = 'S';
+            public const char WestUppercase = 'W';
+
+            public const char StartPoint = 'B';
+            public const char FinishPoint = 'F';
+        }
 
         int FinalPositionX { get; set; }
         int FinalPositionY { get; set; }
@@ -117,34 +119,54 @@ namespace MarsRover.Controllers
             }
             PlateauMap = UnmarkedPlateau;
         }
-        
+
 
         // when the rover needs to mark the plateau map position, it first needs to calculate which section of the string to replace.
         // to do the calculation the number of characters per row must be given in addition to the position of the rover.
 
 
-        // add check for characters that are not L M R
-
-        private void MarkPlateauPosition(int currentPositionX, int currentPositionY, int plateauSizeY)
+        
+        // MarkPositionYCalculation is calculated by taking the characters per row and subtracting the current Y position plus -1
+        // The additional -1 is subtracted because the rows go from 0 - 5, not 1 - 6
+        // the final insertAt position is then calculated by taking MarkPositionYCalculation and multiplying it by the characters per row,
+        // giving it the correct Y position, and then adding the current position X.
+        private void MarkPlateauPosition(int currentPositionX, int currentPositionY, int plateauSizeY, char roverDirection)
         {
-            // MarkPositionYCalculation is calculated by taking the characters per row and subtracting the current Y position plus -1
-            // The additional -1 is subtracted because the rows go from 0 - 5, not 1 - 6
-            // the final insertAt position is then calculated by taking MarkPositionYCalculation and multiplying it by the characters per row,
-            // giving it the correct Y position, and then adding the current position X.
-            
             int MarkPositionYCalculation = plateauSizeY - currentPositionY - 1;
             int insertAt = (plateauSizeY * MarkPositionYCalculation) + currentPositionX;
 
-            // StringBuilder is then used to create a new string equal to the existing PlateauMap string, and inserting an 'x' char in the calculated position.
+            // StringBuilder is used to create a new string equal to the existing PlateauMap string, and inserting a specified char in the calculated position.
             // the PlateauMap string is then changed to the StringBuilder string.
             StringBuilder sb = new StringBuilder(PlateauMap);
-            try
+            if (roverDirection != Constants.StartPoint && roverDirection != Constants.FinishPoint)
             {
-                sb[insertAt] = 'x';
+                if (sb[insertAt] != Constants.StartPoint)
+                {
+                    if (roverDirection == Constants.NorthUppercase)
+                    {
+                        sb[insertAt] = Constants.NorthUppercase;
+                    }
+                    else if (roverDirection == Constants.EastUppercase)
+                    {
+                        sb[insertAt] = Constants.EastUppercase;
+                    }
+                    else if (roverDirection == Constants.SouthUppercase)
+                    {
+                        sb[insertAt] = Constants.SouthUppercase;
+                    }
+                    else if (roverDirection == Constants.WestUppercase)
+                    {
+                        sb[insertAt] = Constants.WestUppercase;
+                    }
+                }
             }
-            catch (Exception ex)
+            else if (roverDirection == Constants.StartPoint)
             {
-                Console.WriteLine("Exception caught " + ex);
+                sb[insertAt] = Constants.StartPoint;
+            }
+            else if (roverDirection == Constants.FinishPoint)
+            {
+                sb[insertAt] = Constants.FinishPoint;
             }
             PlateauMap = sb.ToString();
         }
@@ -171,19 +193,24 @@ namespace MarsRover.Controllers
         #endregion
 
         #region Rover Input
+
         // Calculate rover input
+        // changing roverInput to uppercase means the code only needs one char definition for 'M' 'L' and 'R' each.
+        // position and direction will change several times so I create a variable to get and store them seperately from the initial start position and direction.
+        // a new plateau map will be drawn for every rover input calculation.
+
         private void CalculateRoverInput(int plateauSizeX, int plateauSizeY, int rovStartPosX, int rovStartPosY, char startingDirection, string roverInput)
         {
-            // changing roverInput to uppercase means the code only needs one char definition for 'M' 'L' and 'R' each.
+            startingDirection = startingDirection.ToString().ToUpper()[0];
             roverInput = roverInput.ToUpper();
-            // position and direction will change several times so I create a variable to get and store them seperately from the initial start position and direction.
+            
             int currentPositionX = rovStartPosX;
             int currentPositionY = rovStartPosY;
             char direction = startingDirection;
-            // a new plateau map will be drawn for every rover input calculation.
+            
             DrawRoverPlateau(plateauSizeX, plateauSizeY);
             // this marks the starting position of the rover on the plateau map.
-            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
+            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY, Constants.StartPoint);
 
             // main calculation
             // the for loop checks at position i in the input string for directions and will continue until every character in the string has been checked.
@@ -197,16 +224,16 @@ namespace MarsRover.Controllers
 
                 // since the rover can turn 90 degrees, it does not need to mark its coordinates on the map for every move.
                 // only if it moves forward will the MarkPlateauMap function run
-                if (roverInput[i] == MoveForward)
+                if (roverInput[i] == Constants.MoveForward)
                 {
-                    MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
+                    MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY, direction);
                 }
             }
 
             // after every direction has been given the MarkPlateauMap function will run 1 more time in case the rover moved on its last input,
             // since the for loop will only run if the position i is less than the length of the string
-            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY);
-            InsertPlateauMapLineReturns();
+            MarkPlateauPosition(currentPositionX, currentPositionY, plateauSizeY, Constants.FinishPoint);
+            //InsertPlateauMapLineReturns();
             FinalPositionX = currentPositionX;
             FinalPositionY = currentPositionY;
             FinalDirection = direction;
@@ -217,14 +244,14 @@ namespace MarsRover.Controllers
         // MoveY uses position and direction to move on Y: if facing north it increases the value: if facing south it decreases the value
         private int MoveY(char roverInput, int currentPositionY, char direction)
         {
-            if (roverInput == MoveForward)
+            if (roverInput == Constants.MoveForward)
             {
-                if (direction == NorthLowercase || direction == NorthUppercase)
+                if (direction == Constants.NorthUppercase)
                 {
                     currentPositionY++;
                 }
                 
-                if (direction == SouthLowercase || direction == SouthUppercase)
+                if (direction == Constants.SouthUppercase)
                 {
                     currentPositionY--;
                 }
@@ -234,13 +261,13 @@ namespace MarsRover.Controllers
         // MoveX uses position and direction to move on X: if facing east it increases the value: if facing west it decreases the value
         private int MoveX(char roverInput, int currentPositionX, char direction)
         {
-            if (roverInput == MoveForward)
+            if (roverInput == Constants.MoveForward)
             {
-                if (direction == EastLowercase || direction == EastUppercase)
+                if (direction == Constants.EastUppercase)
                 {
                     currentPositionX++;
                 }
-                if (direction == WestLowercase || direction == WestUppercase)
+                if (direction == Constants.WestUppercase)
                 {
                     currentPositionX--;
                 }
@@ -250,49 +277,49 @@ namespace MarsRover.Controllers
         // changes the direction the rover faces depending on the input and current direction
         private char ChangeDirection(char roverInput, char direction)
         {
-            if (roverInput == TurnLeft)
+            if (roverInput == Constants.TurnLeft)
             {
-                if (direction == NorthLowercase || direction == NorthUppercase)
+                if (direction == Constants.NorthUppercase)
                 {
-                    direction = WestLowercase;
+                    direction = Constants.WestUppercase;
                     return direction;
                 }
-                if (direction == WestLowercase || direction == WestUppercase)
+                if (direction == Constants.WestUppercase)
                 {
-                    direction = SouthLowercase;
+                    direction = Constants.SouthUppercase;
                     return direction;
                 }
-                if (direction == SouthLowercase || direction == SouthUppercase)
+                if (direction == Constants.SouthUppercase)
                 {
-                    direction = EastLowercase;
+                    direction = Constants.EastUppercase;
                     return direction;
                 }
-                if (direction == EastLowercase || direction == EastUppercase)
+                if (direction == Constants.EastUppercase)
                 {
-                    direction = NorthLowercase;
+                    direction = Constants.NorthUppercase;
                     return direction;
                 }
             }
-            if (roverInput == TurnRight)
+            if (roverInput == Constants.TurnRight)
             {
-                if (direction == NorthLowercase || direction == NorthUppercase)
+                if (direction == Constants.NorthUppercase)
                 {
-                    direction = EastLowercase;
+                    direction = Constants.EastUppercase;
                     return direction;
                 }
-                if (direction == EastLowercase || direction == EastUppercase)
+                if (direction == Constants.EastUppercase)
                 {
-                    direction = SouthLowercase;
+                    direction = Constants.SouthUppercase;
                     return direction;
                 }
-                if (direction == SouthLowercase || direction == SouthUppercase)
+                if (direction == Constants.SouthUppercase)
                 {
-                    direction = WestLowercase;
+                    direction = Constants.WestUppercase;
                     return direction;
                 }
-                if (direction == WestLowercase || direction == WestUppercase)
+                if (direction == Constants.WestUppercase)
                 {
-                    direction = NorthLowercase;
+                    direction = Constants.NorthUppercase;
                     return direction;
                 }
             }
